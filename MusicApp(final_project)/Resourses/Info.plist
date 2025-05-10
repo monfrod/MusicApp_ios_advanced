@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key> Microphone Usage Description</key>
+	<string></string>
+	<key>Media Library Usage Description</key>
+	<string>для медиа</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Для подключения к Bluetooth-устройствам</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>yunuslalazov.MusicApp-final-project-</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>yunuslalazov.MusicApp-final-project-</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>&lt;key&gt;CFBundleURLTypes&lt;/key&gt;
+&lt;array&gt;
+    &lt;dict&gt;
+        &lt;key&gt;CFBundleURLSchemes&lt;/key&gt;
+        &lt;array&gt;
+            &lt;string&gt;yunuslalazov.MusicApp-final-project-&lt;/string&gt;  // Например, com.yourapp.spotifydemo
+        &lt;/array&gt;
+    &lt;/dict&gt;
+&lt;/array&gt;</string>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>
