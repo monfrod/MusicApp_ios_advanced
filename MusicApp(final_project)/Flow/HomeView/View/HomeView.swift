@@ -25,17 +25,18 @@ struct HomeView: View {
                 }
                 .padding()
             }
-            .background(Color(.systemBackground))
+            .background(Color.black) // Fixed black background
             .navigationTitle("Home")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: TopTracksView()) {
                         Image(systemName: "music.note.list")
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                     }
                 }
             }
         }
+        .preferredColorScheme(.dark)
     }
     
     // MARK: - Компоненты
@@ -45,11 +46,12 @@ struct HomeView: View {
             Text("Welcome back!")
                 .font(.title2)
                 .fontWeight(.bold)
+                .foregroundColor(.white)
             
             Text("chandrama")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
         }
     }
     
@@ -58,22 +60,26 @@ struct HomeView: View {
             Text("Continue Listening")
                 .font(.headline)
                 .fontWeight(.semibold)
+                .foregroundColor(.white)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 15) {
                     ForEach(continueListeningItems, id: \.self) { item in
-                        VStack(alignment: .leading) {
-                            Image(item.lowercased().replacingOccurrences(of: " ", with: ""))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(8)
-                            
-                            Text(item)
-                                .font(.subheadline)
-                                .lineLimit(1)
+                        NavigationLink(destination: PlaylistView()) {
+                            VStack(alignment: .leading) {
+                                Image(item.lowercased().replacingOccurrences(of: " ", with: ""))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 150, height: 150)
+                                    .cornerRadius(8)
+                                
+                                Text(item)
+                                    .font(.subheadline)
+                                    .lineLimit(1)
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 150)
                         }
-                        .frame(width: 150)
                     }
                 }
             }
@@ -88,19 +94,22 @@ struct HomeView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 15) {
-                    ForEach(items, id: \.self) { item in
-                        VStack(alignment: .leading) {
-                            Image(item.lowercased().replacingOccurrences(of: " ", with: ""))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(8)
-                            
-                            Text(item)
-                                .font(.subheadline)
-                                .lineLimit(1)
+                    ForEach(continueListeningItems, id: \.self) { item in
+                        NavigationLink(destination: PlaylistView()) {
+                            VStack(alignment: .leading) {
+                                Image(item.lowercased().replacingOccurrences(of: " ", with: ""))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 150, height: 150)
+                                    .cornerRadius(8)
+                                
+                                Text(item)
+                                    .font(.subheadline)
+                                    .lineLimit(1)
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 150)
                         }
-                        .frame(width: 150)
                     }
                 }
             }

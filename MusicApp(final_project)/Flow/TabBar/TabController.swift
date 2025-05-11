@@ -25,17 +25,10 @@ class TabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupTabs()
-        self.tabBar.barTintColor = .lightGray
-        self.tabBar.tintColor = .black
-        self.tabBar.backgroundColor = .white
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .black
-        self.tabBar.standardAppearance = appearance
+        self.configureTabBarAppearance()
     }
-    private func setupTabs(){
-//        let service = FirestoreServiceImpl()
-//        let homeVM = HomeViewModel(router: mainRouter)
+
+    private func setupTabs() {
         let homeVC = createNav(title: "Home",
                                image: UIImage(named: "home"),
                                vc: CustomHostingController(shouldShowNavigationBar: false,
@@ -43,24 +36,37 @@ class TabController: UITabBarController {
         
         let reviewVC = createNav(title: "Explore",
                                  image: UIImage(named: "search"),
-                                 vc: CustomHostingController(shouldShowNavigationBar: false, rootView: ExploreView()))
-//        let profileVM = ProfileViewModel(router: appRouter)
-        let hostingView = CustomHostingController(shouldShowNavigationBar: false,
-                                                  rootView: LibraryView())
+                                 vc: CustomHostingController(shouldShowNavigationBar: false,
+                                                             rootView: ExploreView()))
+
         let profileVC = createNav(title: "Library",
                                   image: UIImage(named: "library"),
-                                  vc: hostingView)
-        
+                                  vc: CustomHostingController(shouldShowNavigationBar: false,
+                                                              rootView: LibraryView()))
         
         self.setViewControllers([homeVC, reviewVC, profileVC], animated: true)
     }
-    private func createNav(title: String, image: UIImage?, vc: UIViewController)-> UIViewController{
-        
+
+    private func createNav(title: String, image: UIImage?, vc: UIViewController) -> UIViewController {
         vc.tabBarItem.title = title
         vc.tabBarItem.image = image
-        
         vc.title = title
-        
         return vc
+    }
+    
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        
+        // Text and icon colors
+        appearance.stackedLayoutAppearance.selected.iconColor = .white
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.stackedLayoutAppearance.normal.iconColor = .gray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
+        
+        self.tabBar.standardAppearance = appearance
+        self.tabBar.scrollEdgeAppearance = appearance
+        self.tabBar.tintColor = .white
     }
 }

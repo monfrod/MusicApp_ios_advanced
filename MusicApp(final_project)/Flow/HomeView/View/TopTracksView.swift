@@ -10,12 +10,13 @@ import SwiftUI
 struct TopTracksView: View {
     @State private var selectedCategory = "Tracks"
     @State private var selectedRange = "30 days"
+    @State private var selectedTrack: Track? = nil
 
     let categories = ["Tracks", "Artists", "Albums"]
     let timeRanges = ["30 days", "6 Months", "1 Year", "Lifetime"]
 
     // Dummy track data
-    let tracks = (1..<8).map { Track(title: "Song Title \($0)", artist: "Artist Name") }
+    let tracks = (1..<8).map { Track(title: "Song Title \($0)", artist: "Artist Name", imageName: "grainy") }
 
     var body: some View {
         VStack(alignment: .center) {
@@ -42,6 +43,9 @@ struct TopTracksView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
+        .sheet(item: $selectedTrack) { track in
+            PlayerDetailView(track: track)
+        }
     }
 
     private var tabSection: some View {
@@ -67,8 +71,10 @@ struct TopTracksView: View {
     private var trackList: some View {
         ScrollView {
             VStack(spacing: 12) {
-                ForEach(Array(tracks.enumerated()), id: \.1) { index, track in
-                    NavigationLink(destination: PlayerDetailView(track: track)) {
+                ForEach(Array(tracks.enumerated()), id: \.1.id) { index, track in
+                    Button(action: {
+                        selectedTrack = track
+                    }) {
                         trackRow(rank: index + 1, track: track)
                     }
                 }

@@ -4,6 +4,7 @@
 //
 //  Created by Диас Нургалиев on 10.05.2025.
 //
+
 import SwiftUI
 
 struct PlayerDetailView: View {
@@ -12,8 +13,21 @@ struct PlayerDetailView: View {
     @State private var currentTime: Double = 0.0
     let duration: Double = 163
 
+    @Environment(\.dismiss) var dismiss
+
     var body: some View {
         VStack(spacing: 16) {
+            // Close button
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.down")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                }
+                Spacer()
+            }
+
             Text("PLAYING FROM PLAYLIST:")
                 .font(.caption)
                 .foregroundColor(.gray)
@@ -25,10 +39,10 @@ struct PlayerDetailView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal)
 
-            Rectangle()
-                .fill(Color.gray)
+            Image(uiImage: UIImage(named: track.imageName) ?? UIImage(systemName: "music.note")!)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
                 .frame(height: 240)
-                .overlay(Text("🎵").font(.largeTitle))
                 .cornerRadius(12)
                 .padding()
 
