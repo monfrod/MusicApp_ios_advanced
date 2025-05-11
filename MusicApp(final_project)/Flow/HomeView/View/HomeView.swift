@@ -8,23 +8,34 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Приветствие
-                greetingSection
-                
-                // Продолжить прослушивание
-                continueListeningSection
-                
-                // Рекомендации
-                recommendationsSection(title: "Your Top Mixes", items: topMixes)
-                
-                // На основе вашего прослушивания
-                recommendationsSection(title: "Based on your recent listening", items: recentListening)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Приветствие
+                    greetingSection
+                    
+                    // Продолжить прослушивание
+                    continueListeningSection
+                    
+                    // Рекомендации
+                    recommendationsSection(title: "Your Top Mixes", items: topMixes)
+                    
+                    // На основе вашего прослушивания
+                    recommendationsSection(title: "Based on your recent listening", items: recentListening)
+                }
+                .padding()
             }
-            .padding()
+            .background(Color(.systemBackground))
+            .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: TopTracksView()) {
+                        Image(systemName: "music.note.list")
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
         }
-        .background(Color(.systemBackground))
     }
     
     // MARK: - Компоненты
