@@ -91,6 +91,7 @@ struct HomeView: View {
             Text(title)
                 .font(.headline)
                 .fontWeight(.semibold)
+                .foregroundColor(.white)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 15) {
