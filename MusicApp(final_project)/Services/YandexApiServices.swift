@@ -103,4 +103,50 @@ class YandexApiServices {
             throw NetworkError.requestFailed(error)
         }
     }
+    
+    func fetchRawData(endpoint: String, parameters: [String: String]? = nil) async throws -> Data {
+        guard var urlComponents = URLComponents(string: baseURLString + endpoint) else {
+            print("Ошибка: Неверный базовый URL или конечная точка: \(baseURLString + endpoint)")
+            throw NetworkError.badURL
+        }
+
+        if let parameters = parameters {
+            urlComponents.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+
+        guard let url = urlComponents.url else {
+            print("Ошибка: Не удалось создать URL из компонентов: \(urlComponents)")
+            throw NetworkError.badURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        print("Выполняется запрос (raw) к URL: \(url.absoluteString)")
+        print("Заголовки: \(request.allHTTPHeaderFields ?? [:])")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                if let errorDataString = String(data: data, encoding: .utf8) {
+                    print("Ошибка сервера (статус \(String(describing: (response as? HTTPURLResponse)?.statusCode))): \(errorDataString)")
+                    throw NetworkError.customError("Ошибка сервера: \(errorDataString)")
+                } else {
+                    throw NetworkError.invalidResponse
+                }
+            }
+
+            return data
+
+        } catch let error as NetworkError {
+            throw error
+        } catch {
+            print("Ошибка сетевого запроса (raw): \(error)")
+            throw NetworkError.requestFailed(error)
+        }
+    }
 }

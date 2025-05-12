@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
     
+    
     // Колонки для секций с большими карточками
     let twoColumnGrid: [GridItem] = [
         GridItem(.flexible(), spacing: 16),
@@ -171,7 +172,9 @@ struct HorizontalImageCardsSectionView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(items) { item in
-                        NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)){
+                        NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)
+                            .environmentObject(MusicPlayerManager.shared)
+                        ){
                             MixCardView(item: item)
                         }
                     }

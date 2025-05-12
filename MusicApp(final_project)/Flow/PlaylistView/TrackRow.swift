@@ -10,6 +10,7 @@ import SwiftUI
 struct PlaylistView: View {
     let title: String
     let tracks: [TrackItem]
+    @EnvironmentObject var playerManager: MusicPlayerManager
     
     var body: some View {
         NavigationStack {
@@ -18,9 +19,12 @@ struct PlaylistView: View {
                     
                     LazyVStack(spacing: 12) {
                         ForEach(tracks) { track in
-//                            NavigationLink(destination: PlaylistDetailView(item: track)) {
                             SimpleListItemView(track: track)
-//                            }
+                                .onTapGesture {
+                                    Task {
+                                        await playerManager.playTrack(track)
+                                    }
+                                }
                         }
                     }
                     .padding(.horizontal) // Горизонтальные отступы для списка
@@ -28,14 +32,14 @@ struct PlaylistView: View {
             }
             .padding(.top) // Отступ сверху для всего содержимого ScrollView
         }
-        .background(
+        .background {
             LinearGradient(
                 gradient: Gradient(colors: [Color.gradient, Color.black]),
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .edgesIgnoringSafeArea(.all)
-        )
+            .ignoresSafeArea()
+        }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
