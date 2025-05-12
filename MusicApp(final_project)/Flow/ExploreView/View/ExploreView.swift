@@ -3,17 +3,13 @@ import SwiftUI
 
 // MARK: - Основное View экрана
 struct ExploreView: View {
-    @StateObject private var viewModel = ExploreViewModel()
     
-    let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
+    @StateObject var viewModel: ExploreViewModel
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                SearchBar(text: $viewModel.searchText)
+                SearchBar(text: $viewModel.searchText, viewModel: viewModel)
                     .padding(.horizontal)
                 
                 Spacer()
@@ -37,6 +33,7 @@ struct ExploreView: View {
 struct SearchBar: View {
     @Binding var text: String
     @State private var isEditing = false
+    let viewModel: ExploreViewModel
     
     var body: some View {
         HStack {
@@ -47,7 +44,7 @@ struct SearchBar: View {
                 .cornerRadius(8)
                 .overlay(
                     HStack {
-                        Image(systemName: "magnifyingglass")
+                        Image("search")
                             .foregroundColor(.gray)
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 8)
@@ -66,6 +63,13 @@ struct SearchBar: View {
                 .padding(.horizontal, 10)
                 .onTapGesture {
                     self.isEditing = true
+                }
+                .onSubmit {
+                    guard !text.isEmpty else { return}
+                    Task {
+                        await viewModel.getSearchByTracks(text: text)
+                    }
+                    print("🔍 Поиск по: \(text)")
                 }
             
             if isEditing {

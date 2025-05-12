@@ -42,8 +42,8 @@ class TabController: UITabBarController {
                                image: UIImage(named: "home"),
                                vc: CustomHostingController(shouldShowNavigationBar: false,
                                                            rootView: homeView))
-        
-        let exploreView = ExploreView().environmentObject(playerManager) // Пример для другой вкладки
+        let exploreVM = ExploreViewModel(services: service)
+        let exploreView = ExploreView(viewModel: exploreVM).environmentObject(playerManager) // Пример для другой вкладки
         let exploreVC = createNav(title: "Explore",
                                   image: UIImage(named: "search"),
                                  vc: CustomHostingController(shouldShowNavigationBar: false,

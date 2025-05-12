@@ -6,7 +6,6 @@
 //
 import SwiftUI
 
-// MARK: - Модели данных (заглушки)
 struct GenreItem: Identifiable, Hashable {
     let id = UUID()
     let name: String
