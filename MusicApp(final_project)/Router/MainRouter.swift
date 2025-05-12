@@ -19,4 +19,9 @@ final class MainRouter {
         return tabController
     }
     
+    func goToPlaylist(tracks: [TrackItem]) {
+        let playlistVC = CustomHostingController(shouldShowNavigationBar: false,
+                                                 rootView: PlaylistView())
+        router.push(playlistVC, animated: true)
+    }
 }

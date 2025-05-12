@@ -8,7 +8,6 @@
 import UIKit
 import CoreData
 import FirebaseCore
-import SpotifyiOS
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -29,10 +29,12 @@ class TabController: UITabBarController {
     }
 
     private func setupTabs() {
+        let services = YandexApiServices()
+        let homeVM = HomeViewModel(service: services, router: mainRouter)
         let homeVC = createNav(title: "Home",
                                image: UIImage(named: "home"),
                                vc: CustomHostingController(shouldShowNavigationBar: false,
-                                                           rootView: HomeView()))
+                                                           rootView: HomeView(viewModel: homeVM)))
         
         let reviewVC = createNav(title: "Explore",
                                  image: UIImage(named: "search"),
@@ -56,17 +58,22 @@ class TabController: UITabBarController {
     
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .black
         
-        // Text and icon colors
+        appearance.configureWithDefaultBackground()
+        
+        appearance.backgroundColor = UIColor.black.withAlphaComponent(0.3) // Слегка прозрачный черный
+
+        // Цвета иконок и текста
         appearance.stackedLayoutAppearance.selected.iconColor = .white
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
         appearance.stackedLayoutAppearance.normal.iconColor = .gray
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
         
         self.tabBar.standardAppearance = appearance
-        self.tabBar.scrollEdgeAppearance = appearance
-        self.tabBar.tintColor = .white
+        self.tabBar.scrollEdgeAppearance = appearance // Важно для iOS 15+
+        
+        // Опционально: если хотите, чтобы TabBar не был полностью непрозрачным
+        self.tabBar.isTranslucent = true
+        self.tabBar.tintColor = .white // Цвет выделенной иконки (если не переопределен в appearance)
     }
 }
