@@ -25,19 +25,14 @@ struct HomeView: View {
                 HorizontalImageCardsSectionView(
                     title: "For You",
                     items: viewModel.topMixes,
-                    cardViewBuilder: { mixItem in
-                        MixCardView(item: mixItem)
-                    }
+                    viewModel: viewModel
                 )
                 
                 // 4. Секция "Based on your recent listening"
-                HorizontalImageCardsSectionView(
-                    title: "Based on your recent listening",
-                    items: viewModel.recentListening,
-                    cardViewBuilder: { recentItem in
-                        RecentItemCardView(item: recentItem)
-                    }
-                )
+//                HorizontalImageCardsSectionView(
+//                    title: "Based on your recent listening",
+//                    items: viewModel.recentListening
+//                )
                 
                 Spacer() // Чтобы контент прижимался к верху, если его мало
             }
@@ -160,10 +155,11 @@ struct ContinueListeningCard: View {
 
 
 // Общая секция для горизонтально прокручиваемых карточек с изображениями
-struct HorizontalImageCardsSectionView<Item: Identifiable & Hashable, CardContent: View>: View {
+struct HorizontalImageCardsSectionView: View {
     let title: String
-    let items: [Item]
-    @ViewBuilder let cardViewBuilder: (Item) -> CardContent
+    let items: [ForYouItem]
+    let viewModel: HomeViewModel
+   
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -175,7 +171,9 @@ struct HorizontalImageCardsSectionView<Item: Identifiable & Hashable, CardConten
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(items) { item in
-                        viewModel.
+                        NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)){
+                            MixCardView(item: item)
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -184,15 +182,6 @@ struct HorizontalImageCardsSectionView<Item: Identifiable & Hashable, CardConten
         }
     }
     
-    // Вспомогательная функция для извлечения заголовка, если он есть
-    private func extractTitle(from item: Item) -> String? {
-        if let mixItem = item as? ForYouItem {
-            return mixItem.title
-        } else if let recentItem = item as? RecentItem {
-            return recentItem.title ?? recentItem.subtitle
-        }
-        return nil
-    }
 }
 
 struct MixCardView: View {

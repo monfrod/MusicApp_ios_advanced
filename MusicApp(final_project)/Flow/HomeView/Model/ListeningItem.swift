@@ -15,7 +15,7 @@ struct ListeningItem: Identifiable, Hashable {
     let backgroundColor: Color
 }
 
-struct ForYouItem: Identifiable, Hashable {
+struct ForYouItem: Identifiable {
     let id = UUID()
     let title: String // Например, "Pop Mix", "Chill Mix"
     let imageName: String // Имя системного изображения-заглушки или URL

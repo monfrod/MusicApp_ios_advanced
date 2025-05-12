@@ -25,7 +25,7 @@ struct PlaylistResponse: Codable {
     }
 }
 
-struct TrackItem: Codable {
+struct TrackItem: Codable, Identifiable {
     let id: Int
     let timestamp: String
     let albumId: Int?
@@ -52,7 +52,7 @@ struct Artist: Codable {
     let error: String?
     let reason: String?
     let name: String
-    let cover: Cover
+    let cover: Cover?
     let various: Bool
     let composer: Bool
     let genres: [String] // Assuming empty array type
@@ -67,7 +67,6 @@ struct Artist: Codable {
     let likesCount: String?
     let popularTracks: [String] // Assuming empty array type
     let regions: String?
-    let decomposed: String?
     let fullNames: String?
     let handMadeDescription: String?
     let description: String?
@@ -99,7 +98,6 @@ struct Artist: Codable {
         case likesCount = "likes_count"
         case popularTracks = "popular_tracks"
         case regions
-        case decomposed
         case fullNames = "full_names"
         case handMadeDescription = "hand_made_description"
         case description
@@ -146,7 +144,7 @@ struct Album: Codable {
     let prerolls: String?
     let volumes: String?
     let year: Int
-    let releaseDate: String
+    let releaseDate: String?
     let type: String?
     let trackPosition: TrackPosition
     let regions: String?
