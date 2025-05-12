@@ -28,7 +28,14 @@ struct PlaylistView: View {
             }
             .padding(.top) // Отступ сверху для всего содержимого ScrollView
         }
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [Color.gradient, Color.black]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
+        )
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarColorScheme(.dark, for: .navigationBar)
@@ -47,6 +54,7 @@ struct SimpleListItemView: View {
                     .font(.headline)
                     .foregroundColor(.white)
                     .lineLimit(1)
+                Text(track.track.artists[0].name)
             }
             Spacer() // Занимает оставшееся пространство, прижимая контент влево
         }

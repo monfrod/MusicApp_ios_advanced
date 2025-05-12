@@ -144,12 +144,12 @@ struct ContinueListeningCard: View {
                 .fontWeight(.medium)
                 .lineLimit(2)
                 .padding(.horizontal, 8)
-                .frame(width: 90, height: 60, alignment: .leading) // Фиксированная ширина для текста
-                .background(Color(.systemGray5).opacity(0.7)) // Чуть темнее фон для текста
+                .frame(width: 90, height: 60, alignment: .leading)
+                .background(Color(.systemGray5).opacity(0.7))
         }
-        .frame(width: 150, height: 60) // Общий размер карточки
+        .frame(width: 150, height: 60)
         .cornerRadius(6)
-        .clipped() // Чтобы фон не выходил за скругленные углы
+        .clipped()
     }
 }
 

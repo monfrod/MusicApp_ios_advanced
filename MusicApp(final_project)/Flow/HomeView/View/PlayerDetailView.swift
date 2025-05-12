@@ -51,9 +51,9 @@ struct PlayerDetailView: View {
                     .font(.title2)
                     .bold()
                     .foregroundColor(.white)
-//                Text(track.artists)
-//                    .font(.subheadline)
-//                    .foregroundColor(.gray)
+                Text(track.artists[0].name)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
             }
 
             Slider(value: $currentTime, in: 0...duration)
