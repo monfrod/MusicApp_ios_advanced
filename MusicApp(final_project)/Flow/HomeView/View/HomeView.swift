@@ -2,6 +2,7 @@ import SwiftUI
 
 // MARK: - Основное View экрана Home
 struct HomeView: View {
+    
     @StateObject var viewModel: HomeViewModel
     var playerManager: MusicPlayerManager
     
@@ -11,48 +12,49 @@ struct HomeView: View {
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
+
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 30) {
-                
-                // 1. Приветствие и иконки действий
-                HomeHeaderView(userName: viewModel.userName)
-                    .padding(.horizontal)
-                
-                // 2. Секция "Continue Listening"
-                ContinueListeningSectionView(items: viewModel.continueListeningItems)
-                
-                // 3. Секция "Your Top Mixes"
-                HorizontalImageCardsSectionView(
-                    title: "For You",
-                    items: viewModel.topMixes,
-                    viewModel: viewModel,
-                    playerManager: playerManager
-                )
-                
-                // 4. Секция "Based on your recent listening"
-//                HorizontalImageCardsSectionView(
-//                    title: "Based on your recent listening",
-//                    items: viewModel.recentListening
-//                )
-                
-                Spacer() // Чтобы контент прижимался к верху, если его мало
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 30) {
+                    
+                    // 1. Приветствие и иконки действий
+                    HomeHeaderView(userName: viewModel.userName)
+                        .padding(.horizontal)
+                    
+                    // 2. Секция "Continue Listening"
+                    ContinueListeningSectionView(items: viewModel.continueListeningItems)
+                    
+                    // 3. Секция "Your Top Mixes"
+                    HorizontalImageCardsSectionView(
+                        title: "For You",
+                        items: viewModel.topMixes,
+                        viewModel: viewModel,
+                        playerManager: playerManager
+                    )
+                    
+                    SectionView(title: "Your Top Genres", items: viewModel.topGenres, columns: twoColumnGrid)
+                    
+                    SectionView(title: "Browse All", items: viewModel.browseAllCategories, columns: twoColumnGrid)
+                    
+                    Spacer() // Чтобы контент прижимался к верху, если его мало
+                }
+                .padding(.top, 10) // Небольшой отступ сверху для всего ScrollView
+                .padding(.bottom, 30) // Отступ снизу
             }
-            .padding(.top, 10) // Небольшой отступ сверху для всего ScrollView
-            .padding(.bottom, 30) // Отступ снизу
-        }
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [Color.gradient, Color.black]),
-                startPoint: .top,
-                endPoint: .bottom
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.gradient, Color.black]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .edgesIgnoringSafeArea(.all)
             )
-            .edgesIgnoringSafeArea(.all)
-        )
-        .foregroundColor(.white) // Основной цвет текста белый
-        .task {
-            await viewModel.getForYou()
+            .foregroundColor(.white) // Основной цвет текста белый
+            .task {
+                await viewModel.getForYou()
+            }
         }
     }
 }
@@ -253,4 +255,62 @@ struct RecentItemCardView: View {
     }
 }
 
+struct SectionView: View {
+    let title: String
+    let items: [GenreItem]
+    let columns: [GridItem]
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.horizontal)
+            
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(items) { item in
+                    // Теперь NavigationLink должен работать с родительским UINavigationController
+                    // Для этого UIHostingController, содержащий ExploreView, должен быть
+                    // частью стека UINavigationController. В вашем TabController это так,
+                    // так как сам TabController помещен в rootVC (UINavigationController).
+                    NavigationLink(destination: Text("Детальный экран для: \(item.name)").navigationTitle(item.name) ) {
+                         GenreCardView(item: item)
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+}
+
+struct GenreCardView: View {
+    let item: GenreItem
+    
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            if let imageName = item.imageName {
+                Image(systemName: imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .overlay(
+                        LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]),
+                                       startPoint: .center, endPoint: .bottom)
+                    )
+            } else {
+                item.backgroundColor
+            }
+            
+            Text(item.name)
+                .font(.headline)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .padding(12)
+        }
+        .frame(height: 100)
+        .background(item.backgroundColor.opacity(item.imageName != nil ? 0.3 : 1.0))
+        .cornerRadius(12)
+    }
+}
 

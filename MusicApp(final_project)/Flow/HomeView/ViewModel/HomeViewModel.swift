@@ -27,13 +27,22 @@ class HomeViewModel: ObservableObject {
         ListeningItem(title: "Lo-Fi Beats", subtitle: nil, imageName: "headphones.circle.fill", backgroundColor: .teal.opacity(0.7))
     ]
     
-    @Published var topMixes: [ForYouItem] = []
-    
-    @Published var recentListening: [RecentItem] = [
-        RecentItem(title: nil, subtitle: "Artist Name 1", imageName: "photo.artframe", backgroundColor: Color.gray.opacity(0.3)),
-        RecentItem(title: nil, subtitle: "Artist Name 2", imageName: "cassette.fill", backgroundColor: Color.gray.opacity(0.3)),
-        RecentItem(title: "Album Title 3", subtitle: "Artist Name 3", imageName: "opticaldisc", backgroundColor: Color.gray.opacity(0.3))
+    @Published var topGenres: [GenreItem] = [
+        GenreItem(name: "Kpop", imageName: "music.mic.circle", backgroundColor: .green.opacity(0.7)),
+        GenreItem(name: "Indie", imageName: "guitars", backgroundColor: .pink.opacity(0.7)),
+        GenreItem(name: "R&B", imageName: "music.note.list", backgroundColor: .blue.opacity(0.6)),
+        GenreItem(name: "Pop", imageName: "star.fill", backgroundColor: .orange.opacity(0.7))
     ]
+    @Published var browseAllCategories: [GenreItem] = [
+        GenreItem(name: "Made for You", imageName: "person.crop.square.fill", backgroundColor: .cyan.opacity(0.7)),
+        GenreItem(name: "RELEASED", imageName: "flame.fill", backgroundColor: .purple.opacity(0.7)),
+        GenreItem(name: "Music Charts", imageName: "chart.bar.fill", backgroundColor: .indigo.opacity(0.7)),
+        GenreItem(name: "Podcasts", imageName: "mic.fill", backgroundColor: .red.opacity(0.6)),
+        GenreItem(name: "Bollywood", imageName: "film.fill", backgroundColor: .yellow.opacity(0.6)),
+        GenreItem(name: "Pop Fusion", imageName: "music.quarternote.3", backgroundColor: .teal.opacity(0.7))
+    ]
+    
+    @Published var topMixes: [ForYouItem] = []
     
     func getForYou() async {
         do {
