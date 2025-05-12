@@ -8,7 +8,6 @@ import SwiftUI
 import AVFoundation
 
 class MusicPlayerManager: ObservableObject {
-    static let shared = MusicPlayerManager()
     @Published var audioPlayer: AVPlayer?
     @Published var currentTrack: TrackItem? = nil
     @Published var isPlaying: Bool = false
@@ -51,6 +50,7 @@ class MusicPlayerManager: ObservableObject {
                 self.audioPlayer?.play()
                 self.currentTrack = track
                 self.isPlaying = true
+                print("MusicPlayerManager: playTrack - SET currentTrack to \(track.track.title), isPlaying: \(self.isPlaying)")
             }
         } catch {
             print("Ошибка загрузки аудио: \(error)")

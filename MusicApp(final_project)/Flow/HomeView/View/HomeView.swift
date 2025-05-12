@@ -3,6 +3,7 @@ import SwiftUI
 // MARK: - Основное View экрана Home
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    var playerManager: MusicPlayerManager
     
     
     // Колонки для секций с большими карточками
@@ -26,7 +27,8 @@ struct HomeView: View {
                 HorizontalImageCardsSectionView(
                     title: "For You",
                     items: viewModel.topMixes,
-                    viewModel: viewModel
+                    viewModel: viewModel,
+                    playerManager: playerManager
                 )
                 
                 // 4. Секция "Based on your recent listening"
@@ -160,6 +162,7 @@ struct HorizontalImageCardsSectionView: View {
     let title: String
     let items: [ForYouItem]
     let viewModel: HomeViewModel
+    let playerManager: MusicPlayerManager
    
     
     var body: some View {
@@ -173,7 +176,7 @@ struct HorizontalImageCardsSectionView: View {
                 HStack(spacing: 16) {
                     ForEach(items) { item in
                         NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)
-                            .environmentObject(MusicPlayerManager.shared)
+                            .environmentObject(playerManager)
                         ){
                             MixCardView(item: item)
                         }

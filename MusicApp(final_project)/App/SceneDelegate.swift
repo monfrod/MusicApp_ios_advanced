@@ -12,6 +12,7 @@ import SwiftUI
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    static let playerManager = MusicPlayerManager()
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -37,7 +38,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("регистрация или вход")
             router.navigateToSignIn()
         }
-        
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
     }
