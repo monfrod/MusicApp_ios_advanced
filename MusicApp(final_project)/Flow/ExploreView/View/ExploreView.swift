@@ -201,7 +201,13 @@ struct TrackRowView: View {
         .background(Color.black.opacity(0.001))
         .onTapGesture {
             print("Нажат трек: \(trackItem.title ?? "")")
-//            playerManager.playTrack(<#T##TrackItem#>)
+            if let appTrack = AppTrack(from: trackItem) {
+                Task {
+                    await playerManager.playTrack(appTrack)
+                }
+            } else {
+                print("Error: Could not convert track \(trackItem.title) to AppTrack.")
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ struct MiniPlayerView: View {
     var onTapAction: () -> Void // Замыкание для обработки нажатия
     
     var body: some View {
-        let _ = print("MiniPlayerView body. currentTrack: \(playerManager.currentTrack?.track.title ?? "nil"), isPlaying: \(playerManager.isPlaying)")
+        let _ = print("MiniPlayerView body. currentTrack: \(playerManager.currentTrack?.title ?? "nil"), isPlaying: \(playerManager.isPlaying)")
         if let track = playerManager.currentTrack {
             VStack(spacing: 0) {
                 GeometryReader { geometry in
@@ -34,62 +34,57 @@ struct MiniPlayerView: View {
                 .frame(height: 3) // Высота прогресс-бара
                 
                 HStack(spacing: 12) { // Уменьшен spacing
-                    if let imageUrlString = track.track.coverUri {
-                        let resolvedUrlString = imageUrlString.replacingOccurrences(of: "%%", with: "200x200")
-                        if let url = URL(string: "https://\(resolvedUrlString)") {
-                            
-                            AsyncImage(url: url) { image in
-                                image.resizable().aspectRatio(contentMode: .fill)
-                            } placeholder: {
-                                Rectangle().fill(Color.gray.opacity(0.5))
-                                    .overlay(Image(systemName: "music.note").foregroundColor(.white.opacity(0.7)))
-                            }
-                            .frame(width: 40, height: 40)
-                            .cornerRadius(4)
-                            .clipped()
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(track.track.title)
-                                    .font(.system(size: 14, weight: .semibold)) // Немного жирнее
-                                    .foregroundColor(.white)
+                    
+                    AsyncImage(url: playerManager.currentTrack?.coverURL) { image in
+                        image.resizable().aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Rectangle().fill(Color.gray.opacity(0.5))
+                            .overlay(Image(systemName: "music.note").foregroundColor(.white.opacity(0.7)))
+                    }
+                    .frame(width: 40, height: 40)
+                    .cornerRadius(4)
+                    .clipped()
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(track.title)
+                            .font(.system(size: 14, weight: .semibold)) // Немного жирнее
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                        HStack(spacing: 4) {
+                            ForEach(track.artistNames, id: \.self) { artist in
+                                Text(artist)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Color(white: 0.7))
                                     .lineLimit(1)
-                                HStack(spacing: 4) {
-                                    ForEach(track.track.artists, id: \.id) { artist in
-                                        Text(artist.name)
-                                            .font(.system(size: 12))
-                                            .foregroundColor(Color(white: 0.7))
-                                            .lineLimit(1)
-                                    }
-                                }
                             }
-                            .padding(.leading, 4) // Небольшой отступ для текста
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                playerManager.togglePlayPause()
-                            }) {
-                                Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
-                                    .font(.system(size: 22)) // Размер иконки плей/пауза
-                                    .foregroundColor(.white)
-                                    .frame(width: 40, height: 40) // Увеличиваем область нажатия
-                            }
-                            // .padding(.trailing, 5) // Уменьшен отступ
                         }
                     }
+                    .padding(.leading, 4) // Небольшой отступ для текста
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        playerManager.togglePlayPause()
+                    }) {
+                        Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
+                            .font(.system(size: 22)) // Размер иконки плей/пауза
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40) // Увеличиваем область нажатия
+                    }
+                    // .padding(.trailing, 5) // Уменьшен отступ
                 }
-                .padding([.horizontal], 12) // Горизонтальные отступы
-                .padding([.vertical], 8)  // Вертикальные отступы
-                .frame(height: 60) // Общая высота контентной части мини-плеера
-                .background(Color(UIColor.systemGray5.withAlphaComponent(0.2))) // Полупрозрачный фон, близкий к системному
-                .contentShape(Rectangle()) // Делаем всю область HStack таппабельной
-                .onTapGesture {
-                    onTapAction() // Вызываем замыкание при нажатии
-                }
-                .background(.ultraThinMaterial) // Эффект размытия фона для iOS 15+
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .frame(height: 63) // Общая высота MiniPlayerView, включая прогресс-бар
             }
+            .padding(.horizontal, 12) // Горизонтальные отступы
+            .padding(.vertical, 8)  // Вертикальные отступы
+            .frame(height: 60) // Общая высота контентной части мини-плеера
+            .background(Color(UIColor.systemGray5.withAlphaComponent(0.2))) // Полупрозрачный фон, близкий к системному
+            .contentShape(Rectangle()) // Делаем всю область HStack таппабельной
+            .onTapGesture {
+                onTapAction() // Вызываем замыкание при нажатии
+            }
+            .background(.ultraThinMaterial) // Эффект размытия фона для iOS 15+
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .frame(height: 63) // Общая высота MiniPlayerView, включая прогресс-бар
         }
     }
 }

@@ -9,7 +9,7 @@ import AVFoundation
 
 class MusicPlayerManager: ObservableObject {
     @Published var audioPlayer: AVPlayer?
-    @Published var currentTrack: TrackItem? = nil
+    @Published var currentTrack: AppTrack? = nil
     @Published var isPlaying: Bool = false
     @Published var playbackProgress: Double = 0.0 // от 0.0 до 1.0
     @Published var currentTime: TimeInterval = 0.0
@@ -18,10 +18,10 @@ class MusicPlayerManager: ObservableObject {
 
     private var timeObserverToken: Any?
 
-    func playTrack(_ track: TrackItem) async {
+    func playTrack(_ track: AppTrack) async {
         stopAndClearPlayer()
 
-        guard let url = URL(string: "https://ios-advanced-backend.onrender.com/stream/\(track.track.id)?apiKey=ios-advanced") else {
+        guard let url = URL(string: "https://ios-advanced-backend.onrender.com/stream/\(track.id)?apiKey=ios-advanced") else {
             print("Invalid URL")
             return
         }
@@ -30,7 +30,7 @@ class MusicPlayerManager: ObservableObject {
         DispatchQueue.main.async {
             self.audioPlayer = AVPlayer(playerItem: playerItem)
 
-            self.duration = TimeInterval(track.track.durationMs) / 1000.0
+            self.duration = TimeInterval(track.durationMilliseconds) / 1000.0
 
             self.timeObserverToken = self.audioPlayer?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] time in
                 guard let self = self, self.duration > 0 else { return }
@@ -46,7 +46,7 @@ class MusicPlayerManager: ObservableObject {
             self.audioPlayer?.play()
             self.currentTrack = track
             self.isPlaying = true
-            print("MusicPlayerManager: playTrack - SET currentTrack to \(track.track.title), isPlaying: \(self.isPlaying)")
+            print("MusicPlayerManager: playTrack - SET currentTrack to \(track.title), isPlaying: \(self.isPlaying)")
         }
     }
 

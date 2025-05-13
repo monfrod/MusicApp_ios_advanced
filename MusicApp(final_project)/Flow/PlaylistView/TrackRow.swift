@@ -16,84 +16,104 @@ struct PlaylistView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-                    
-                    LazyVStack(spacing: 12) {
-                        ForEach(tracks) { track in
-                            SimpleListItemView(track: track)
+                    LazyVStack(spacing: 0) {
+                        ForEach(tracks) { trackItem in
+                            SimpleListItemView(trackItem: trackItem)
+                                .padding(.bottom, 1)
+                                .contentShape(Rectangle())
                                 .onTapGesture {
-                                    Task {
-                                        await playerManager.playTrack(track)
+                                    if let appTrack = AppTrack(from: trackItem.track) {
+                                        Task {
+                                            await playerManager.playTrack(appTrack)
+                                        }
+                                    } else {
+                                        print("Error: Could not convert track \(trackItem.track.title) to AppTrack.")
                                     }
                                 }
                         }
                     }
-                    .padding(.horizontal) // Горизонтальные отступы для списка
+                    .padding(.horizontal)
                 }
             }
-            .padding(.top) // Отступ сверху для всего содержимого ScrollView
+            .padding(.top)
+            .background {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.gradient, Color.black]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
-        .background {
-            LinearGradient(
-                gradient: Gradient(colors: [Color.gradient, Color.black]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.large)
-        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 }
 
 
-// 4. Упрощенное представление для элемента списка
 struct SimpleListItemView: View {
-    let track: TrackItem
+    let trackItem: TrackItem
     
+    private var artistDisplayName: String {
+        return trackItem.track.artists.first?.name ?? "Unknown Artist"
+    }
+    
+    private var coverImageUrl: URL? {
+        guard let coverUriTemplate = trackItem.track.coverUri else { return nil }
+        
+        if coverUriTemplate.contains("%%") {
+            let resolvedUrlString = coverUriTemplate.replacingOccurrences(of: "%%", with: "100x100")
+            return URL(string: "https://\(resolvedUrlString)")
+        } else if let url = URL(string: coverUriTemplate), url.scheme != nil {
+            return url
+        } else if let url = URL(string: "https://\(coverUriTemplate)") {
+            return url
+        }
+        return nil
+    }
+
     var body: some View {
         HStack(spacing: 12) {
-            if let imageUrlString = track.track.coverUri {
-                let resolvedUrlString = imageUrlString.replacingOccurrences(of: "%%", with: "100x100")
-                if let url = URL(string: "https://\(resolvedUrlString)") {
-                    AsyncImage(url: url) { phase in
-                        if let image = phase.image {
-                            image.resizable()
-                        } else if phase.error != nil {
-                            Image(systemName: "photo")
-                                .resizable()
-                                .foregroundColor(.gray)
-                        } else {
-                            ProgressView()
-                        }
-                    }
-                    .frame(width: 50, height: 50)
-                    .cornerRadius(4)
-                    .clipped()
-                } else {
-                    Image(systemName: "music.note")
+            AsyncImage(url: coverImageUrl) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 50, height: 50)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(4)
+                case .success(let image):
+                    image.resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure:
+                    Image(systemName: "photo")
                         .resizable()
                         .scaledToFit()
+                        .foregroundColor(.gray)
                         .frame(width: 50, height: 50)
-                        .padding(10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(4)
-                        .foregroundColor(.white)
+                @unknown default:
+                    EmptyView()
                 }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(track.track.title)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                    Text(track.track.artists[0].name)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .lineLimit(1)
-                }
-                
-                Spacer()
             }
+            .frame(width: 50, height: 50)
+            .cornerRadius(4)
+            .clipped()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(trackItem.track.title)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                Text(artistDisplayName)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
         }
+        .padding(.vertical, 8)
     }
 }
