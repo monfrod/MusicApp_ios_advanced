@@ -21,39 +21,32 @@ class MusicPlayerManager: ObservableObject {
     func playTrack(_ track: TrackItem) async {
         stopAndClearPlayer()
 
-        do {
-            let data = try await service.fetchRawData(endpoint: "/stream/\(track.track.id)")
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mp3")
-            try data.write(to: tempURL)
+        guard let url = URL(string: "https://ios-advanced-backend.onrender.com/stream/\(track.track.id)?apiKey=ios-advanced") else {
+            print("Invalid URL")
+            return
+        }
 
-            let playerItem = AVPlayerItem(url: tempURL)
-            DispatchQueue.main.async {
-                self.audioPlayer = AVPlayer(playerItem: playerItem)
+        let playerItem = AVPlayerItem(url: url)
+        DispatchQueue.main.async {
+            self.audioPlayer = AVPlayer(playerItem: playerItem)
 
-                playerItem.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-                    DispatchQueue.main.async {
-                        self.duration = playerItem.duration.seconds > 0 ? playerItem.duration.seconds : 0.0
-                    }
-                }
+            self.duration = TimeInterval(track.track.durationMs) / 1000.0
 
-                self.timeObserverToken = self.audioPlayer?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] time in
-                    guard let self = self, self.duration > 0 else { return }
-                    self.currentTime = time.seconds
-                    self.playbackProgress = time.seconds / self.duration
-                }
-
-                NotificationCenter.default.addObserver(self,
-                                                       selector: #selector(self.playerDidFinishPlaying),
-                                                       name: .AVPlayerItemDidPlayToEndTime,
-                                                       object: playerItem)
-
-                self.audioPlayer?.play()
-                self.currentTrack = track
-                self.isPlaying = true
-                print("MusicPlayerManager: playTrack - SET currentTrack to \(track.track.title), isPlaying: \(self.isPlaying)")
+            self.timeObserverToken = self.audioPlayer?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC)), queue: .main) { [weak self] time in
+                guard let self = self, self.duration > 0 else { return }
+                self.currentTime = time.seconds
+                self.playbackProgress = time.seconds / self.duration
             }
-        } catch {
-            print("Ошибка загрузки аудио: \(error)")
+
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(self.playerDidFinishPlaying),
+                                                   name: .AVPlayerItemDidPlayToEndTime,
+                                                   object: playerItem)
+
+            self.audioPlayer?.play()
+            self.currentTrack = track
+            self.isPlaying = true
+            print("MusicPlayerManager: playTrack - SET currentTrack to \(track.track.title), isPlaying: \(self.isPlaying)")
         }
     }
 
