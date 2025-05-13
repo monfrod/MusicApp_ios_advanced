@@ -114,7 +114,6 @@ struct DownloadedTrackRowView: View {
                     image.resizable()
                         .aspectRatio(contentMode: .fill)
                 case .failure:
-                    // Icon for downloaded track default removed
                     EmptyView()
                 @unknown default:
                     EmptyView()

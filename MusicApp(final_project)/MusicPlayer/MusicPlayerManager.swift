@@ -11,7 +11,7 @@ class MusicPlayerManager: ObservableObject {
     @Published var audioPlayer: AVPlayer?
     @Published var currentTrack: AppTrack? = nil
     @Published var isPlaying: Bool = false
-    @Published var playbackProgress: Double = 0.0 // от 0.0 до 1.0
+    @Published var playbackProgress: Double = 0.0
     @Published var currentTime: TimeInterval = 0.0
     @Published var duration: TimeInterval = 0.0
     let service = YandexApiServices()
@@ -78,14 +78,12 @@ class MusicPlayerManager: ObservableObject {
         playbackProgress = 0.0
         currentTime = 0.0
         duration = 0.0
-        // currentTrack не сбрасываем здесь, чтобы MiniPlayer оставался видимым с последним треком
     }
     
     @objc private func playerDidFinishPlaying(note: NSNotification) {
         DispatchQueue.main.async {
             self.isPlaying = false
-            self.playbackProgress = 1.0 // или 0.0, если нужно сбросить
-            // Здесь можно добавить логику для авто-переключения на следующий трек
+            self.playbackProgress = 1.0 //
         }
     }
 

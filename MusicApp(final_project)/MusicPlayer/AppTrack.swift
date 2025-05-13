@@ -5,50 +5,39 @@
 //  Created by yunus on 13.05.2025.
 //
 
-
 import SwiftUI
 import AVFoundation
-import OSLog // Для логирования
+import OSLog
 
-// MARK: - Унифицированная модель трека для UI и плеера
-struct AppTrack: Identifiable, Equatable { // Добавим Equatable для сравнения
-    let id: String              // Уникальный строковый ID трека (для стриминга)
+struct AppTrack: Identifiable, Equatable {
+    let id: String
     let title: String
     let artistNames: [String]
     let coverURL: URL?
     let durationMilliseconds: Int
-    // Добавьте другие общие поля, если нужны
 
-    // Для Equatable
     static func == (lhs: AppTrack, rhs: AppTrack) -> Bool {
-        return lhs.id == rhs.id // Сравниваем по ID
+        return lhs.id == rhs.id
     }
 
-    // MARK: - Инициализаторы для преобразования
-
-    /// Инициализатор из `Track` (который находится внутри `TrackItem` из плейлиста)
-    init?(from trackDetails: Track?) { // Сделаем инициализатор failable, если trackDetails может быть nil
+    init?(from trackDetails: Track?) {
         guard let trackDetails = trackDetails else { return nil }
         
-        // Убедимся, что trackDetails.id не nil и не пустой, иначе трек невалиден для AppTrack
-        // В вашей модели Track.id - это String, не опциональный, так что проверка на nil не нужна,
-        // но на пустую строку может быть полезна, если API может вернуть пустой ID.
         guard !trackDetails.id.isEmpty else {
             print("AppTrack init error: Track.id is empty.")
             return nil
         }
         self.id = trackDetails.id
-        self.title = trackDetails.title // В вашей модели Track.title не опциональный
-        self.artistNames = trackDetails.artists.map { $0.name } // В вашей модели Artist.name не опциональный
+        self.title = trackDetails.title
+        self.artistNames = trackDetails.artists.map { $0.name }
         
-        if let coverUriTemplate = trackDetails.coverUri { // coverUri в Track опциональный
-            // Предполагаем, что coverUri может быть полным URL или шаблоном
+        if let coverUriTemplate = trackDetails.coverUri {
             if coverUriTemplate.contains("%%") {
                 let resolvedUrlString = coverUriTemplate.replacingOccurrences(of: "%%", with: "200x200")
                 self.coverURL = URL(string: "https://\(resolvedUrlString)")
-            } else if let url = URL(string: coverUriTemplate), url.scheme != nil { // Проверяем, является ли это уже полным URL
+            } else if let url = URL(string: coverUriTemplate), url.scheme != nil {
                  self.coverURL = url
-            } else if let url = URL(string: "https://\(coverUriTemplate)") { // Пытаемся добавить https, если это не полный URL
+            } else if let url = URL(string: "https://\(coverUriTemplate)") {
                  self.coverURL = url
             }
             else {
@@ -57,20 +46,17 @@ struct AppTrack: Identifiable, Equatable { // Добавим Equatable для с
         } else {
             self.coverURL = nil
         }
-        self.durationMilliseconds = trackDetails.durationMs // В вашей модели Track.durationMs не опциональный
+        self.durationMilliseconds = trackDetails.durationMs
     }
 
-    /// Инициализатор из `TrackSearchResult`
-    init?(from searchResult: TrackSearchResult?) { // Сделаем инициализатор failable
+    init?(from searchResult: TrackSearchResult?) {
         guard let searchResult = searchResult else { return nil }
 
-        // Для ID используем realId если есть, иначе приводим Int ID к String
-        // Убедимся, что итоговый ID не пустой
         let trackIdString: String
         if let realId = searchResult.realId, !realId.isEmpty {
             trackIdString = realId
         } else {
-            trackIdString = String(searchResult.id) // searchResult.id это Int
+            trackIdString = String(searchResult.id)
         }
         guard !trackIdString.isEmpty else {
             print("AppTrack init error: Resulting track ID from TrackSearchResult is empty.")
@@ -82,9 +68,8 @@ struct AppTrack: Identifiable, Equatable { // Добавим Equatable для с
         self.artistNames = searchResult.artists?.compactMap { $0.name } ?? ["Неизвестный исполнитель"]
         
         var tempCoverUrl: URL? = nil
-        let sizesToTry = ["200x200", "100x100", "50x50"] // Размеры для попытки
+        let sizesToTry = ["200x200", "100x100", "50x50"]
 
-        // Пробуем coverUri
         if let coverUriTemplate = searchResult.coverUri, !coverUriTemplate.isEmpty {
             for size in sizesToTry {
                 let resolvedUrlString = coverUriTemplate.replacingOccurrences(of: "%%", with: size)
@@ -94,20 +79,14 @@ struct AppTrack: Identifiable, Equatable { // Добавим Equatable для с
                 }
             }
         }
-        // Если coverUri не дал результата, пробуем ogImage
         if tempCoverUrl == nil, let ogImageTemplate = searchResult.ogImage, !ogImageTemplate.isEmpty {
             for size in sizesToTry {
-                 // ogImage обычно не содержит '%%', а является прямым шаблоном URL
-                 // или уже готовым URL. Если это шаблон типа avatars.yandex.net/.../%%, то замена нужна.
-                 // Если это прямой URL, замена не нужна.
-                 // Для примера, если ogImage может быть шаблоном:
                 let resolvedUrlString = ogImageTemplate.replacingOccurrences(of: "%%", with: size)
-                if let url = URL(string: "https://\(resolvedUrlString)") { // или просто URL(string: ogImageTemplate) если это полный URL
+                if let url = URL(string: "https://\(resolvedUrlString)") {
                     tempCoverUrl = url
                     break
                 }
             }
-             // Если ogImage - это уже готовый URL:
             if tempCoverUrl == nil, let url = URL(string: ogImageTemplate), url.scheme != nil {
                 tempCoverUrl = url
             } else if tempCoverUrl == nil, let url = URL(string: "https://\(ogImageTemplate)") {

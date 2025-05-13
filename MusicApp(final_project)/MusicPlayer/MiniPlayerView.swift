@@ -8,7 +8,7 @@ import SwiftUI
 
 struct MiniPlayerView: View {
     @EnvironmentObject var playerManager: MusicPlayerManager
-    var onTapAction: () -> Void // Замыкание для обработки нажатия
+    var onTapAction: () -> Void
     
     var body: some View {
         let _ = print("MiniPlayerView body. currentTrack: \(playerManager.currentTrack?.title ?? "nil"), isPlaying: \(playerManager.isPlaying)")
@@ -17,10 +17,10 @@ struct MiniPlayerView: View {
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(Color.gray.opacity(0.3)) // Фон прогресс-бара
+                            .fill(Color.gray.opacity(0.3))
                             .frame(height: 3)
                         Rectangle()
-                            .fill(Color.white) // Заполненная часть прогресс-бара
+                            .fill(Color.white)
                             .frame(width: geometry.size.width * CGFloat(playerManager.playbackProgress), height: 3)
                     }
                     .gesture(
@@ -31,9 +31,9 @@ struct MiniPlayerView: View {
                             }
                     )
                 }
-                .frame(height: 3) // Высота прогресс-бара
+                .frame(height: 3)
                 
-                HStack(spacing: 12) { // Уменьшен spacing
+                HStack(spacing: 12) {
                     
                     AsyncImage(url: playerManager.currentTrack?.coverURL) { image in
                         image.resizable().aspectRatio(contentMode: .fill)
@@ -47,7 +47,7 @@ struct MiniPlayerView: View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(track.title)
-                            .font(.system(size: 14, weight: .semibold)) // Немного жирнее
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .lineLimit(1)
                         HStack(spacing: 4) {
@@ -59,7 +59,7 @@ struct MiniPlayerView: View {
                             }
                         }
                     }
-                    .padding(.leading, 4) // Небольшой отступ для текста
+                    .padding(.leading, 4)
                     
                     Spacer()
                     
@@ -67,24 +67,23 @@ struct MiniPlayerView: View {
                         playerManager.togglePlayPause()
                     }) {
                         Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.system(size: 22)) // Размер иконки плей/пауза
+                            .font(.system(size: 22))
                             .foregroundColor(.white)
-                            .frame(width: 40, height: 40) // Увеличиваем область нажатия
+                            .frame(width: 40, height: 40)
                     }
-                    // .padding(.trailing, 5) // Уменьшен отступ
                 }
             }
-            .padding(.horizontal, 12) // Горизонтальные отступы
-            .padding(.vertical, 8)  // Вертикальные отступы
-            .frame(height: 60) // Общая высота контентной части мини-плеера
-            .background(Color(UIColor.systemGray5.withAlphaComponent(0.2))) // Полупрозрачный фон, близкий к системному
-            .contentShape(Rectangle()) // Делаем всю область HStack таппабельной
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(height: 60)
+            .background(Color(UIColor.systemGray5.withAlphaComponent(0.2)))
+            .contentShape(Rectangle())
             .onTapGesture {
-                onTapAction() // Вызываем замыкание при нажатии
+                onTapAction()
             }
-            .background(.ultraThinMaterial) // Эффект размытия фона для iOS 15+
+            .background(.ultraThinMaterial)
             .transition(.move(edge: .bottom).combined(with: .opacity))
-            .frame(height: 63) // Общая высота MiniPlayerView, включая прогресс-бар
+            .frame(height: 63)
         }
     }
 }

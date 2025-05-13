@@ -36,7 +36,7 @@ struct ExploreView: View {
                         
                         LazyVStack(spacing: 0) {
                             ForEach(viewModel.searchResults) { trackItem in
-                                TrackRowView(trackItem: trackItem, playerManager: playerManager)
+                                TrackRowView(trackItem: trackItem, playerManager: playerManager, viewModel: viewModel)
                                     .padding(.horizontal)
                                     .padding(.vertical, 4)
                             }
@@ -133,6 +133,7 @@ struct SearchBar: View {
 struct TrackRowView: View {
     let trackItem: TrackSearchResult
     let playerManager: MusicPlayerManager
+    let viewModel: ExploreViewModel
     
     var body: some View {
         HStack(spacing: 12) {
@@ -193,8 +194,23 @@ struct TrackRowView: View {
             
             Spacer()
             
-            Image(systemName: "ellipsis")
-                .foregroundColor(.gray)
+            HStack(spacing: 16) {
+                Button(action: {
+                    let artistNames = trackItem.artists?.compactMap { $0.name }.joined(separator: ", ") ?? "Unknown Artist"
+                    Task {
+                        await viewModel.downloadAndSaveTrack(id: trackItem.id,
+                                                             title: trackItem.title ?? "Untitled",
+                                                             artist: artistNames,
+                                                             imageUrlString: trackItem.coverUri ?? "")
+                    }
+                }) {
+                    Image(systemName: "arrow.down.circle")
+                        .foregroundColor(.white)
+                }
+
+                Image(systemName: "ellipsis")
+                    .foregroundColor(.gray)
+            }
         }
         .padding(.vertical, 8)
         // Для срабатывания onTapGesture по всей строке
