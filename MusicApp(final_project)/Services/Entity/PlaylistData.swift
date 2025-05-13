@@ -155,7 +155,7 @@ struct Album: Codable {
     let durationMs: String?
     let explicit: String?
     let startDate: String?
-    let likesCount: Int
+    let likesCount: Int?
     let deprecation: String?
     let availableRegions: String?
     let availableForOptions: [String]
