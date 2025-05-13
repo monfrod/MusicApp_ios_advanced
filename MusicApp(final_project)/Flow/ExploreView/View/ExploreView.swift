@@ -4,43 +4,80 @@ import SwiftUI
 // MARK: - Основное View экрана
 struct ExploreView: View {
     
+    let playerManager: MusicPlayerManager
     @StateObject var viewModel: ExploreViewModel
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                SearchBar(text: $viewModel.searchText, viewModel: viewModel)
-                    .padding(.horizontal)
-                
-                Spacer()
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    
+                    SearchBar(text: $viewModel.searchText, viewModel: viewModel)
+                        .padding(.horizontal)
+                    
+                    if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            Spacer()
+                        }
+                        .padding(.top, 20)
+                    } else if viewModel.searchResults.isEmpty && !viewModel.searchText.isEmpty && !viewModel.isLoading {
+                        Text("No results found for \"\(viewModel.searchText)\".")
+                            .foregroundColor(.gray)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else if !viewModel.searchResults.isEmpty {
+                        Text("Search Results:")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal)
+                        
+                        LazyVStack(spacing: 0) {
+                            ForEach(viewModel.searchResults) { trackItem in
+                                TrackRowView(trackItem: trackItem, playerManager: playerManager)
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 4)
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top)
             }
-            .padding(.vertical)
-        }
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [Color.gradient, Color.black]),
-                startPoint: .top,
-                endPoint: .bottom
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.gradient, Color.black]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .edgesIgnoringSafeArea(.all)
             )
-            .edgesIgnoringSafeArea(.all)
-        )
+            .navigationTitle("Search")
+            .navigationBarTitleDisplayMode(.large)
+            // Скрытие клавиатуры при скролле (iOS 16+)
+            .scrollDismissesKeyboard(.interactively)
+        }
+        .accentColor(.white)
     }
 }
 
-// MARK: - Компоненты View (SearchBar, SectionView, GenreCardView)
-
+// MARK: - Компоненты View
 
 struct SearchBar: View {
     @Binding var text: String
     @State private var isEditing = false
-    let viewModel: ExploreViewModel
+    @ObservedObject var viewModel: ExploreViewModel
     
     var body: some View {
         HStack {
-            TextField("Songs, Artists, Podcasts & More", text: $text)
+            TextField("Songs, artists, podcasts, etc.", text: $text)
                 .padding(10)
-                .padding(.horizontal, 25)
+                .padding(.leading, 25)
                 .background(Color(.systemGray6))
+                .foregroundColor(Color.primary)
                 .cornerRadius(8)
                 .overlay(
                     HStack {
@@ -60,12 +97,15 @@ struct SearchBar: View {
                         }
                     }
                 )
-                .padding(.horizontal, 10)
                 .onTapGesture {
-                    self.isEditing = true
+                    withAnimation {
+                        self.isEditing = true
+                    }
                 }
                 .onSubmit {
-                    guard !text.isEmpty else { return}
+                    guard !text.isEmpty else {
+                        return
+                    }
                     Task {
                         await viewModel.getSearchByTracks(text: text)
                     }
@@ -74,15 +114,94 @@ struct SearchBar: View {
             
             if isEditing {
                 Button(action: {
-                    self.isEditing = false
-                    self.text = ""
+                    withAnimation {
+                        self.isEditing = false
+                    }
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }) {
-                    Text("Cancel") // Локализация может потребоваться
+                    Text("Cancel")
+                        .foregroundColor(.white)
                 }
-                .padding(.trailing, 10)
-                .transition(.move(edge: .trailing))
+                .padding(.leading, 5)
+                .transition(.move(edge: .trailing).combined(with: .opacity))
             }
+        }
+    }
+}
+
+// MARK: - Строка для отображения трека в списке результатов
+struct TrackRowView: View {
+    let trackItem: TrackSearchResult
+    let playerManager: MusicPlayerManager
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            if let imageUrlString = trackItem.coverUri,
+               let resolvedUrlString = imageUrlString.replacingOccurrences(of: "%%", with: "200x200") as String?,
+               let url = URL(string: "https://\(resolvedUrlString)") {
+
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image.resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .cornerRadius(4)
+                            .clipped()
+                    } else if phase.error != nil {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .background(Color.gray.opacity(0.3))
+                            .cornerRadius(4)
+                            .foregroundColor(.gray)
+                    } else {
+                        ProgressView()
+                            .frame(width: 50, height: 50)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(4)
+                    }
+                }
+            } else {
+                Image(systemName: "music.note")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+                    .padding(10)
+                    .background(Color.gray.opacity(0.3))
+                    .cornerRadius(4)
+                    .foregroundColor(.white)
+            }
+            
+            VStack(alignment: .leading) {
+                Text(trackItem.title ?? "Untitled")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                if let artists = trackItem.artists, !artists.isEmpty {
+                    Text(artists.compactMap { $0.name }.joined(separator: ", "))
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                } else {
+                    Text("Unknown Artist")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                }
+            }
+            
+            Spacer()
+            
+            Image(systemName: "ellipsis")
+                .foregroundColor(.gray)
+        }
+        .padding(.vertical, 8)
+        // Для срабатывания onTapGesture по всей строке
+        .background(Color.black.opacity(0.001))
+        .onTapGesture {
+            print("Нажат трек: \(trackItem.title ?? "")")
+//            playerManager.playTrack(<#T##TrackItem#>)
         }
     }
 }

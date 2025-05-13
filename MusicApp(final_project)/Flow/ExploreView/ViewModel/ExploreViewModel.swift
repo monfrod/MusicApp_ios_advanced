@@ -17,6 +17,7 @@ class ExploreViewModel: ObservableObject {
     
     @Published var searchText: String = ""
     @Published var searchResults: [TrackSearchResult] = []
+    @Published var isLoading: Bool = false
     
     func getSearchByTracks(text: String) async {
         do {
@@ -31,5 +32,15 @@ class ExploreViewModel: ObservableObject {
             print("❌ Ошибка поиска: \(error)")
         }
     }
+    
+//    func makeTSRtoTI(track: TrackSearchResult) -> TrackItem {
+//        return TrackItem(
+//            id: track.id,
+//            title: track.title ?? "Untitled",
+//            coverUri: track.coverUri,
+//            artistName: track.artists?.first?.name ?? "Unknown Artist",
+//            durationMs: track.durationMs ?? 0
+//        )
+//    }
     
 }
