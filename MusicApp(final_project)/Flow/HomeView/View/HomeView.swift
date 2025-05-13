@@ -52,8 +52,13 @@ struct HomeView: View {
                 .edgesIgnoringSafeArea(.all)
             )
             .foregroundColor(.white) // Основной цвет текста белый
-            .task {
-                await viewModel.getForYou()
+            .onAppear {
+                if !viewModel.hasLoadedForYou {
+                    Task {
+                        await viewModel.getForYou()
+                        viewModel.hasLoadedForYou = true
+                    }
+                }
             }
         }
     }
@@ -173,19 +178,32 @@ struct HorizontalImageCardsSectionView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(items) { item in
-                        NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)
-                            .environmentObject(playerManager)
-                        ){
-                            MixCardView(item: item)
+            if viewModel.topMixes.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 16) {
+                        ForEach(0..<3) { item in
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 200, height: 240)
                         }
                     }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 4)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 16) {
+                        ForEach(items) { item in
+                            NavigationLink(destination: PlaylistView(title: item.title ,tracks: item.tracks)
+                                .environmentObject(playerManager)
+                            ){
+                                MixCardView(item: item)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                }
             }
         }
     }

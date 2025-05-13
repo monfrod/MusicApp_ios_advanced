@@ -48,8 +48,8 @@ class TabController: UITabBarController {
                                   image: UIImage(named: "search"),
                                  vc: CustomHostingController(shouldShowNavigationBar: false,
                                                              rootView: exploreView))
-
-        let libraryView = LibraryView().environmentObject(playerManager) // Пример для другой вкладки
+        let libraryVM = LibraryViewModel()
+        let libraryView = LibraryView(viewModel: libraryVM, playerManager: playerManager).environmentObject(playerManager) // Пример для другой вкладки
         let libraryVC = createNav(title: "Library",
                                   image: UIImage(named: "library"),
                                   vc: CustomHostingController(shouldShowNavigationBar: false,

@@ -43,7 +43,7 @@ struct ExploreView: View {
                         }
                     }
                     
-                    Spacer()
+                    Spacer().frame(height: 50)
                 }
                 .padding(.top)
             }

@@ -17,6 +17,7 @@ class HomeViewModel: ObservableObject {
     }
     
     @Published var userName: String = "chandrama" // Имя пользователя
+    @Published var hasLoadedForYou = false
     
     @Published var continueListeningItems: [ListeningItem] = [
         ListeningItem(title: "Coffee & Jazz", subtitle: nil, imageName: "cup.and.saucer.fill", backgroundColor: .brown.opacity(0.7)),

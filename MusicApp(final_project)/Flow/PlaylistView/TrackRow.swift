@@ -33,6 +33,8 @@ struct PlaylistView: View {
                         }
                     }
                     .padding(.horizontal)
+                    
+                    Spacer().frame(height: 50)
                 }
             }
             .padding(.top)
