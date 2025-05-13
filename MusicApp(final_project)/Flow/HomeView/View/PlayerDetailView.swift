@@ -39,7 +39,7 @@ struct PlayerDetailView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal)
 
-            Image(uiImage: UIImage(named: track.coverUri) ?? UIImage(systemName: "music.note")!)
+            Image(uiImage: UIImage(named: track.coverUri ?? "") ?? UIImage(systemName: "music.note")!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(height: 240)

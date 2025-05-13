@@ -50,20 +50,50 @@ struct PlaylistView: View {
 // 4. Упрощенное представление для элемента списка
 struct SimpleListItemView: View {
     let track: TrackItem
-
+    
     var body: some View {
-        HStack() {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(track.track.title)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                Text(track.track.artists[0].name)
+        HStack(spacing: 12) {
+            if let imageUrlString = track.track.coverUri {
+                let resolvedUrlString = imageUrlString.replacingOccurrences(of: "%%", with: "100x100")
+                if let url = URL(string: "https://\(resolvedUrlString)") {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image.resizable()
+                        } else if phase.error != nil {
+                            Image(systemName: "photo")
+                                .resizable()
+                                .foregroundColor(.gray)
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .frame(width: 50, height: 50)
+                    .cornerRadius(4)
+                    .clipped()
+                } else {
+                    Image(systemName: "music.note")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50, height: 50)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.3))
+                        .cornerRadius(4)
+                        .foregroundColor(.white)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(track.track.title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    Text(track.track.artists[0].name)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
             }
-            Spacer() // Занимает оставшееся пространство, прижимая контент влево
         }
-        .padding(10) // Внутренние отступы для каждой ячейки
-        .background(Color.gray.opacity(0.15)) // Легкий фон для каждой ячейки
-        .cornerRadius(10)
     }
 }

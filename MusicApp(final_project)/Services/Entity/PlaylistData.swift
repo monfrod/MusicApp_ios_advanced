@@ -223,7 +223,7 @@ struct Track: Codable {
     let realId: String
     let ogImage: String
     let type: String
-    let coverUri: String
+    let coverUri: String?
     let major: Major
     let durationMs: Int
     let storageDir: String
