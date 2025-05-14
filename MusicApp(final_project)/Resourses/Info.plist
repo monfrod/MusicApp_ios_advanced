@@ -4,10 +4,6 @@
 <dict>
 	<key> Microphone Usage Description</key>
 	<string></string>
-	<key>Media Library Usage Description</key>
-	<string>для медиа</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Для подключения к Bluetooth-устройствам</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -19,6 +15,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>Media Library Usage Description</key>
+	<string>для медиа</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

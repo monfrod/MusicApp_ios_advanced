@@ -106,7 +106,7 @@ class TabController: UITabBarController {
             miniPlayerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             miniPlayerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             miniPlayerView.bottomAnchor.constraint(equalTo: self.tabBar.topAnchor, constant: 0),
-        ])
+        ]);ytrea≥,mn
         miniPlayerHeightConstraint = miniPlayerView.heightAnchor.constraint(equalToConstant: 64)
         miniPlayerHeightConstraint?.isActive = true
         
@@ -131,15 +131,12 @@ class TabController: UITabBarController {
     }
 
     func presentPlayerDetail() {
-        // Создаем PlayerDetailView и передаем ему playerManager
 //        let playerDetailSwiftUIView = PlayerDetailView(track: playerManager.$currentTrack).environmentObject(playerManager)
 //        let hostingController = UIHostingController(rootView: playerDetailSwiftUIView)
 //        hostingController.modalPresentationStyle = .pageSheet // или .formSheet, .fullScreen
-//        
-//        // Убедимся, что PlayerDetailView занимает весь экран, если это .pageSheet или .formSheet
-////        if #available(iOS 15.0, *) {
+//
 ////            if let sheet = hostingController.sheetPresentationController {
-////                sheet.detents = [.large()] // Только большой размер
+////                sheet.detents = [.large()]
 ////                sheet.prefersGrabberVisible = true
 ////            }
 ////        }

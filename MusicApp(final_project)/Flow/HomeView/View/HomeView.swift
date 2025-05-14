@@ -287,10 +287,6 @@ struct SectionView: View {
             
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(items) { item in
-                    // Теперь NavigationLink должен работать с родительским UINavigationController
-                    // Для этого UIHostingController, содержащий ExploreView, должен быть
-                    // частью стека UINavigationController. В вашем TabController это так,
-                    // так как сам TabController помещен в rootVC (UINavigationController).
                     NavigationLink(destination: Text("Детальный экран для: \(item.name)").navigationTitle(item.name) ) {
                          GenreCardView(item: item)
                     }
@@ -305,30 +301,17 @@ struct GenreCardView: View {
     let item: GenreItem
     
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            if let imageName = item.imageName {
-                Image(systemName: imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
-                    .overlay(
-                        LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]),
-                                       startPoint: .center, endPoint: .bottom)
-                    )
-            } else {
-                item.backgroundColor
-            }
-            
-            Text(item.name)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding(12)
-        }
-        .frame(height: 100)
-        .background(item.backgroundColor.opacity(item.imageName != nil ? 0.3 : 1.0))
-        .cornerRadius(12)
+        Image(item.imageName!)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(height: 100)
+            .frame(maxWidth: .infinity)
+            .clipped()
+            .overlay(
+                LinearGradient(gradient: Gradient(colors: [.black.opacity(0.0), .black.opacity(0.4)]),
+                               startPoint: .center, endPoint: .bottom)
+            )
+            .background(item.backgroundColor.opacity(item.imageName != nil ? 0.3 : 1.0))
+            .cornerRadius(12)
     }
 }
-

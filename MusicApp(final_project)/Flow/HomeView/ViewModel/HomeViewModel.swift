@@ -29,18 +29,18 @@ class HomeViewModel: ObservableObject {
     ]
     
     @Published var topGenres: [GenreItem] = [
-        GenreItem(name: "Kpop", imageName: "music.mic.circle", backgroundColor: .green.opacity(0.7)),
-        GenreItem(name: "Indie", imageName: "guitars", backgroundColor: .pink.opacity(0.7)),
-        GenreItem(name: "R&B", imageName: "music.note.list", backgroundColor: .blue.opacity(0.6)),
-        GenreItem(name: "Pop", imageName: "star.fill", backgroundColor: .orange.opacity(0.7))
+        GenreItem(name: "Kpop", imageName: "kpop", backgroundColor: .green.opacity(0.7)),
+        GenreItem(name: "Indie", imageName: "indie", backgroundColor: .pink.opacity(0.7)),
+        GenreItem(name: "R&B", imageName: "rnb", backgroundColor: .blue.opacity(0.6)),
+        GenreItem(name: "Pop", imageName: "pop", backgroundColor: .orange.opacity(0.7))
     ]
     @Published var browseAllCategories: [GenreItem] = [
-        GenreItem(name: "Made for You", imageName: "person.crop.square.fill", backgroundColor: .cyan.opacity(0.7)),
-        GenreItem(name: "RELEASED", imageName: "flame.fill", backgroundColor: .purple.opacity(0.7)),
-        GenreItem(name: "Music Charts", imageName: "chart.bar.fill", backgroundColor: .indigo.opacity(0.7)),
-        GenreItem(name: "Podcasts", imageName: "mic.fill", backgroundColor: .red.opacity(0.6)),
-        GenreItem(name: "Bollywood", imageName: "film.fill", backgroundColor: .yellow.opacity(0.6)),
-        GenreItem(name: "Pop Fusion", imageName: "music.quarternote.3", backgroundColor: .teal.opacity(0.7))
+        GenreItem(name: "Made for You", imageName: "u", backgroundColor: .cyan.opacity(0.7)),
+        GenreItem(name: "RELEASED", imageName: "new", backgroundColor: .purple.opacity(0.7)),
+        GenreItem(name: "Music Charts", imageName: "charts", backgroundColor: .indigo.opacity(0.7)),
+        GenreItem(name: "Podcasts", imageName: "pods", backgroundColor: .red.opacity(0.6)),
+        GenreItem(name: "Bollywood", imageName: "bol", backgroundColor: .yellow.opacity(0.6)),
+        GenreItem(name: "Pop Fusion", imageName: "popFusion", backgroundColor: .teal.opacity(0.7))
     ]
     
     @Published var topMixes: [ForYouItem] = []
