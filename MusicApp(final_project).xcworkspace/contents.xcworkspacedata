@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:MusicApp(final_project)/CoreData/DownloadTracks+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MusicApp(final_project)/CoreData/DownloadTracks+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:MusicApp(final_project).xcodeproj">
    </FileRef>
    <FileRef

@@ -40,6 +40,7 @@ final class AppRouter {
         let mainRouter = MainRouter(router: self)
         let mainTabBar = mainRouter.createMainInterface()
         rootVC?.setViewControllers([mainTabBar], animated: true)
+        rootVC?.isNavigationBarHidden = true
     }
     
     // Навигация обратно к онбордингу
